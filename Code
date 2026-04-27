@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Player Developer - AI Soccer Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --secondary: #ff0080;
+            --accent: #00d4ff;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050810;
+            --bg-card: #1a1f3a;
+            --bg-card-hover: #252d4a;
+            --text-light: #e8ecf1;
+            --text-dim: #a0aec0;
+            --border: #2d3748;
+            --success: #00ff88;
+            --warning: #ffd700;
+            --danger: #ff4757;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, #1a1f3a 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgShift 15s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -20px); }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .home-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            position: relative;
+        }
+
+        .floating-element {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .float-1 { top: 10%; left: 10%; width: 300px; height: 300px; background: var(--primary); animation-delay: 0s; }
+        .float-2 { top: 60%; right: 10%; width: 200px; height: 200px; background: var(--accent); animation-delay: 5s; }
+        .float-3 { bottom: 10%; left: 20%; width: 250px; height: 250px; background: var(--secondary); animation-delay: 10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInScale 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-dim);
+            margin-bottom: 50px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            padding: 18px 50px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--bg-dark);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+            animation: fadeInUp 1s ease-out 0.4s both;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 255, 136, 0.5);
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .assessment-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .step-counter {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .assessment-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            animation: slideInUp 0.5s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .assessment-question {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="number"],
+        .input-group input[type="email"] {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--bg-darker);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .slider-container {
+            margin: 30px 0;
+        }
+
+        .slider-input {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .slider-input::-webkit-slider-thumb:hover {
+            width: 28px;
+            height: 28px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+        }
+
+        .slider-input::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .slider-value span {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-grid.single {
+            grid-template-columns: 1fr;
+        }
+
+        .option-btn {
+            padding: 15px 20px;
+            background: var(--bg-darker);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--bg-dark);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            justify-content: space-between;
+        }
+
+        .btn-secondary {
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-light);
+            transform: translateX(-5px);
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 10px;
+            color: var(--bg-dark);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .dna-report-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .report-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .player-name-header {
+            font-size: 1.8rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .player-subtitle {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .report-grid { grid-template-columns: 1fr; }
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            animation: slideInUp 0.6s ease-out;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-description {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .archetype-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--secondary) 100%);
+            color: var(--bg-dark);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            margin-top: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .radar-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            margin: 30px 0;
+        }
+
+        svg.radar {
+            filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.2));
+        }
+
+        .strengths-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .strength-list, .weakness-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .strength-list, .weakness-list { grid-template-columns: 1fr; }
+        }
+
+        .strength-item {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .strength-item:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .weakness-item {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .weakness-item:hover {
+            background: rgba(255, 71, 87, 0.2);
+            border-color: var(--danger);
+            transform: translateX(5px);
+        }
+
+        .focus-area-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .focus-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .focus-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .focus-card:hover::before {
+            left: 100%;
+        }
+
+        .focus-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.2);
+        }
+
+        .focus-area-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .focus-area-desc {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--danger) 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .training-plan-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .plan-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .plan-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .week-selector {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .week-btn {
+            padding: 12px 25px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .week-btn.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-color: var(--primary);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .week-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .calendar-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .day-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .day-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--text-dim);
+            transition: all 0.3s ease;
+        }
+
+        .day-card.practice::before {
+            background: var(--accent);
+        }
+
+        .day-card.game::before {
+            background: var(--danger);
+        }
+
+        .day-card.training::before {
+            background: var(--primary);
+        }
+
+        .day-card.rest::before {
+            background: var(--warning);
+        }
+
+        .day-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.15);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .day-name {
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .day-number {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        .day-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .day-type.training {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--primary);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .day-type.practice {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--accent);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .day-type.game {
+            background: rgba(255, 71, 87, 0.2);
+            color: var(--danger);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+
+        .day-type.rest {
+            background: rgba(255, 215, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .workout-item {
+            background: var(--bg-darker);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            border-left: 3px solid var(--primary);
+            max-height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .day-card.expanded {
+            grid-column: 1 / -1;
+        }
+
+        .workout-detail {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .workout-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .workout-section {
+            margin-bottom: 30px;
+        }
+
+        .workout-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent);
+        }
+
+        .exercise-card {
+            background: var(--bg-darker);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            border-left-color: var(--accent);
+            transform: translateX(5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.1);
+        }
+
+        .exercise-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .exercise-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .exercise-detail {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+        }
+
+        .exercise-detail strong {
+            color: var(--primary);
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .coaching-points {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .dashboard-header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        .welcome-section p {
+            color: var(--text-dim);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 255, 136, 0.1);
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .card-subtitle {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .progress-ring-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+            width: 200px;
+            height: 200px;
+        }
+
+        .progress-ring-circle {
+            transition: stroke-dashoffset 0.5s ease;
+            transform-origin: 50% 50%;
+        }
+
+        .progress-text {
+            position: absolute;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .activity-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .activity-bars {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .bar-container {
+            text-align: center;
+        }
+
+        .bar {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-darker);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 8px;
+            animation: fillUp 0.8s ease-out;
+        }
+
+        @keyframes fillUp {
+            from { height: 0; }
+        }
+
+        .bar-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .mini-stat {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .mini-stat-label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .mini-stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .report-grid { grid-template-columns: 1fr; }
+            .calendar-grid { grid-template-columns: 1fr; }
+            .option-grid { grid-template-columns: 1fr; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .shimmer {
+            animation: shimmer 2s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: pageIn 0.5s ease-out;
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-element float-1"></div>
+        <div class="floating-element float-2"></div>
+        <div class="floating-element float-3"></div>
+    </div>
+
+    <div class="container">
+        <div id="homePage" class="page active">
+            <div class="home-page">
+                <div class="hero-content">
+                    <h1 class="hero-title">🚀 Player Developer</h1>
+                    <p class="hero-subtitle">A complete AI-powered soccer development system</p>
+                    <button class="cta-button" onclick="goToAssessment()">Start Assessment</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="assessmentPage" class="page">
+            <div class="assessment-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                </div>
+
+                <div class="step-counter" id="stepCounter">Step 1 of 12</div>
+
+                <div id="assessmentContent"></div>
+
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="previousStep()" id="prevBtn" style="display: none;">← Back</button>
+                    <button class="btn-primary" onclick="nextStep()" id="nextBtn">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="reportPage" class="page">
+            <div class="dna-report-container">
+                <div class="report-header">
+                    <h1 class="report-title">⚡ PLAYER DNA REPORT</h1>
+                    <p class="player-name-header" id="reportPlayerName">Loading...</p>
+                    <p class="player-subtitle" id="reportPosition"></p>
+                </div>
+
+                <div class="report-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Overall Rating</div>
+                        <div class="stat-value" id="overallRating">78</div>
+                        <div class="stat-description">Your complete player performance score across all areas</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Player Archetype</div>
+                        <div class="stat-description" id="playerArchetype">Loading...</div>
+                        <div class="archetype-badge" id="archetypeBadge">Loading...</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Technical Rating</div>
+                        <div class="stat-value" id="technicalRating">75</div>
+                        <div class="stat-description">Ball control, first touch, dribbling, passing quality</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Tactical Rating</div>
+                        <div class="stat-value" id="tacticalRating">72</div>
+                        <div class="stat-description">Positioning, awareness, decision-making, movement</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Physical Rating</div>
+                        <div class="stat-value" id="physicalRating">80</div>
+                        <div class="stat-description">Speed, strength, endurance, explosiveness, agility</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Mental Rating</div>
+                        <div class="stat-value" id="mentalRating">68</div>
+                        <div class="stat-description">Confidence, composure, leadership, resilience</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Recovery Rating</div>
+                        <div class="stat-value" id="recoveryRating">65</div>
+                        <div class="stat-description">Mobility, flexibility, sleep quality, recovery habits</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-label">Performance Ceiling</div>
+                        <div class="stat-description">Based on your development trajectory and potential</div>
+                        <div class="stat-value" id="performanceCeiling" style="font-size: 2.5rem; margin-top: 15px;">88+</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="grid-column: 1 / -1; margin-bottom: 40px;">
+                    <div class="stat-label" style="margin-bottom: 30px;">Performance Radar</div>
+                    <div class="radar-container">
+                        <svg class="radar" width="350" height="350" viewBox="0 0 350 350">
+                            <circle cx="175" cy="175" r="130" fill="none" stroke="#2d3748" stroke-width="1" opacity="0.5"/>
+                            <circle cx="175" cy="175" r="100" fill="none" stroke="#2d3748" stroke-width="1" opacity="0.5"/>
+                            <circle cx="175" cy="175" r="70" fill="none" stroke="#2d3748" stroke-width="1" opacity="0.5"/>
+                            <circle cx="175" cy="175" r="40" fill="none" stroke="#2d3748" stroke-width="1" opacity="0.5"/>
+
+                            <line x1="175" y1="45" x2="175" y2="305" stroke="#2d3748" stroke-width="1" opacity="0.3"/>
+                            <line x1="45" y1="175" x2="305" y2="175" stroke="#2d3748" stroke-width="1" opacity="0.3"/>
+
+                            <polygon id="radarPolygon" points="175,70 245,120 260,190 230,260 120,260 90,190" 
+                                     fill="rgba(0, 255, 136, 0.2)" stroke="url(#radarGradient)" stroke-width="2"/>
+
+                            <defs>
+                                <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#00ff88;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+
+                            <text x="175" y="35" text-anchor="middle" fill="#a0aec0" font-size="12" font-weight="600">TECHNICAL</text>
+                            <text x="280" y="180" text-anchor="start" fill="#a0aec0" font-size="12" font-weight="600">TACTICAL</text>
+                            <text x="175" y="325" text-anchor="middle" fill="#a0aec0" font-size="12" font-weight="600">MENTAL</text>
+                            <text x="45" y="180" text-anchor="end" fill="#a0aec0" font-size="12" font-weight="600">PHYSICAL</text>
+                            <text x="245" y="125" text-anchor="middle" fill="#a0aec0" font-size="12" font-weight="600">RECOVERY</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="strengths-section">
+                    <h2 class="section-title">💪 Key Strengths</h2>
+                    <div class="strength-list" id="strengthsList"></div>
+                </div>
+
+                <div class="strengths-section">
+                    <h2 class="section-title">📈 Development Areas</h2>
+                    <div class="weakness-list" id="weaknessList"></div>
+                </div>
+
+                <div class="strengths-section">
+                    <h2 class="section-title">🎯 Recommended Focus Areas</h2>
+                    <div class="focus-area-grid" id="focusAreas"></div>
+                </div>
+
+                <div class="strengths-section">
+                    <h2 class="section-title">⭐ Similar Professional Players</h2>
+                    <div class="strength-list" id="playerComparisons"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 50px;">
+                    <button class="cta-button" onclick="goToTrainingPlan()">Generate My Training Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="trainingPlanPage" class="page">
+            <div class="training-plan-container">
+                <div class="plan-header">
+                    <h1 class="plan-title">📅 Your Personalized Training Plan</h1>
+                    <p style="color: var(--text-dim); margin-top: 10px;">AI-designed for your position, level, and goals</p>
+                </div>
+
+                <div class="week-selector" id="weekSelector"></div>
+
+                <div class="calendar-grid" id="calendarGrid"></div>
+
+                <div id="selectedDayWorkout"></div>
+
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="cta-button" onclick="goToDashboard()">Go to My Dashboard</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboardPage" class="page">
+            <div class="dashboard-container">
+                <div class="dashboard-header">
+                    <div class="welcome-section">
+                        <h1>Welcome, <span id="dashboardName">Player</span>! 🎯</h1>
+                        <p id="dashboardMessage">Keep grinding - your development never stops</p>
+                    </div>
+                    <button class="btn-secondary" onclick="goToHome()">← Back to Home</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Training Streak</div>
+                        <div class="mini-stat-value" id="trainingStreak">7</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">This Week XP</div>
+                        <div class="mini-stat-value" id="weeklyXP">450</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Readiness Score</div>
+                        <div class="mini-stat-value" id="readinessScore">84%</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">Recovery Index</div>
+                        <div class="mini-stat-value" id="recoveryIndex">92%</div>
+                    </div>
+                </div>
+
+                <div class="activity-section">
+                    <h2 class="section-title">📊 Weekly Training Activity</h2>
+                    <div class="activity-bars" id="activityBars"></div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <div class="card-title">Next Session</div>
+                        <div class="card-value" style="font-size: 1.3rem;">Technical + Strength</div>
+                        <div class="card-subtitle">Tomorrow at 5:00 PM • 2h 30m</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-title">Next Game</div>
+                        <div class="card-value" style="font-size: 1.3rem;">Saturday 7:00 PM</div>
+                        <div class="card-subtitle">3 days away • Stay focused</div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="card-title">AI Coach Tip</div>
+                        <div class="card-value" style="font-size: 1.1rem; line-height: 1.4;">Focus on first touch in tight spaces today</div>
+                        <div class="card-subtitle">Improves your technical rating by 3-4 points</div>
+                    </div>
+                </div>
+
+                <div class="activity-section" style="margin-top: 30px;">
+                    <h2 class="section-title">💡 Daily Focus Points</h2>
+                    <div id="dailyFocusPoints"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 50px; padding-bottom: 30px;">
+                    <button class="btn-secondary" onclick="goToAssessment()">Retake Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 0;
+        let assessmentData = {
+            name: '',
+            age: '',
+            position: '',
+            level: '',
+            goal: '',
+            season: '',
+            practiceDays: [],
+            gameDays: [],
+            equipment: [],
+            planLength: '',
+            intensity: '',
+            weaknesses: {},
+            physicalScores: {},
+            technicalScores: {},
+            tacticalScores: {},
+            mentalScores: {},
+            mobilityScores: {}
+        };
+
+        const questions = [
+            {
+                type: 'text',
+                question: 'What is your name?',
+                field: 'name',
+                placeholder: 'Enter your name'
+            },
+            {
+                type: 'number',
+                question: 'How old are you?',
+                field: 'age',
+                placeholder: 'Enter your age'
+            },
+            {
+                type: 'options',
+                question: 'What is your position?',
+                field: 'position',
+                options: ['Goalkeeper', 'Center Back', 'Left Back', 'Right Back', 'CDM', 'CAM', 'Left Winger', 'Right Winger', 'Striker', 'Fullback', 'Midfielder'],
+                multi: false
+            },
+            {
+                type: 'options',
+                question: 'What is your current level?',
+                field: 'level',
+                options: ['Beginner', 'Competitive', 'Academy', 'ECNL/MLS Next', 'Elite'],
+                multi: false
+            },
+            {
+                type: 'options',
+                question: 'What is your main goal?',
+                field: 'goal',
+                options: ['Become faster', 'Improve dribbling', 'Improve confidence', 'Improve soccer IQ', 'Make team', 'Improve endurance', 'Injury prevention', 'Become more explosive', 'Better scanning', 'Finishing', 'First touch'],
+                multi: false
+            },
+            {
+                type: 'options',
+                question: 'Are you currently:',
+                field: 'season',
+                options: ['In season', 'Offseason'],
+                multi: false
+            },
+            {
+                type: 'text',
+                question: 'What days of the week do you have TEAM PRACTICES? (e.g., Mon,Wed,Fri)',
+                field: 'practiceDays',
+                placeholder: 'e.g., Monday, Wednesday, Friday'
+            },
+            {
+                type: 'text',
+                question: 'What days of the week do you have GAMES? (e.g., Sat,Sun)',
+                field: 'gameDays',
+                placeholder: 'e.g., Saturday, Sunday'
+            },
+            {
+                type: 'options',
+                question: 'What equipment do you have access to?',
+                field: 'equipment',
+                options: ['Ball', 'Cones', 'Wall', 'Goals', 'Turf/Field', 'Resistance bands', 'Weights/Gym', 'Mini hurdles', 'Ladder', 'Foam roller', 'Yoga mat'],
+                multi: true
+            },
+            {
+                type: 'options',
+                question: 'Choose your training plan length:',
+                field: 'planLength',
+                options: ['1 Week', '2 Weeks', '4 Weeks'],
+                multi: false
+            },
+            {
+                type: 'options',
+                question: 'Choose training intensity:',
+                field: 'intensity',
+                options: ['Light', 'Moderate', 'Intense', 'Elite Grind'],
+                multi: false
+            },
+            {
+                type: 'detailed-assessment',
+                question: 'Quick assessment - Rate yourself on key areas (1-10)',
+                field: 'detailedScores'
+            }
+        ];
+
+        function goToHome() {
+            showPage('homePage');
+        }
+
+        function goToAssessment() {
+            currentStep = 0;
+            assessmentData = {
+                name: '',
+                age: '',
+                position: '',
+                level: '',
+                goal: '',
+                season: '',
+                practiceDays: [],
+                gameDays: [],
+                equipment: [],
+                planLength: '',
+                intensity: '',
+                weaknesses: {},
+                physicalScores: {},
+                technicalScores: {},
+                tacticalScores: {},
+                mentalScores: {},
+                mobilityScores: {}
+            };
+            renderQuestion();
+            showPage('assessmentPage');
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function renderQuestion() {
+            const q = questions[currentStep];
+            const content = document.getElementById('assessmentContent');
+            const progress = ((currentStep + 1) / questions.length) * 100;
+
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('stepCounter').textContent = `Step ${currentStep + 1} of ${questions.length}`;
+
+            let html = `
+                <div class="assessment-card">
+                    <div class="assessment-question">${q.question}</div>
+            `;
+
+            if (q.type === 'text' || q.type === 'number') {
+                html += `
+                    <div class="input-group">
+                        <input type="${q.type === 'number' ? 'number' : 'text'}" 
+                               id="answer" 
+                               placeholder="${q.placeholder}"
+                               value="${assessmentData[q.field] || ''}"
+                               class="assessment-input">
+                    </div>
+                `;
+            } else if (q.type === 'options') {
+                html += '<div class="option-grid' + (q.multi ? '' : '.single') + '">';
+                q.options.forEach(opt => {
+                    const selected = q.multi ? 
+                        assessmentData[q.field].includes(opt) : 
+                        assessmentData[q.field] === opt;
+                    html += `
+                        <button class="option-btn ${selected ? 'selected' : ''}" 
+                                onclick="selectOption('${q.field}', '${opt}', ${q.multi})">
+                            ${opt}
+                        </button>
+                    `;
+                });
+                html += '</div>';
+            } else if (q.type === 'detailed-assessment') {
+                html += `
+                    <div style="margin-top: 20px;">
+                        <div class="input-group" style="margin-bottom: 20px;">
+                            <label style="color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;">⚡ Speed & Acceleration</label>
+                            <input type="range" min="1" max="10" value="${assessmentData.physicalScores.speed || 5}" 
+                                   onchange="assessmentData.physicalScores.speed = this.value; updateSliderDisplay(this)" class="slider-input">
+                            <div class="slider-value"><span id="speedVal">${assessmentData.physicalScores.speed || 5}</span><span>/10</span></div>
+                        </div>
+
+                        <div class="input-group" style="margin-bottom: 20px;">
+                            <label style="color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;">🎯 Dribbling & Technical</label>
+                            <input type="range" min="1" max="10" value="${assessmentData.technicalScores.dribbling || 5}" 
+                                   onchange="assessmentData.technicalScores.dribbling = this.value; updateSliderDisplay(this)" class="slider-input">
+                            <div class="slider-value"><span id="dribblingVal">${assessmentData.technicalScores.dribbling || 5}</span><span>/10</span></div>
+                        </div>
+
+                        <div class="input-group" style="margin-bottom: 20px;">
+                            <label style="color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;">👁️ Awareness & Positioning</label>
+                            <input type="range" min="1" max="10" value="${assessmentData.tacticalScores.awareness || 5}" 
+                                   onchange="assessmentData.tacticalScores.awareness = this.value; updateSliderDisplay(this)" class="slider-input">
+                            <div class="slider-value"><span id="awarenessVal">${assessmentData.tacticalScores.awareness || 5}</span><span>/10</span></div>
+                        </div>
+
+                        <div class="input-group" style="margin-bottom: 20px;">
+                            <label style="color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;">💪 Mental Toughness</label>
+                            <input type="range" min="1" max="10" value="${assessmentData.mentalScores.toughness || 5}" 
+                                   onchange="assessmentData.mentalScores.toughness = this.value; updateSliderDisplay(this)" class="slider-input">
+                            <div class="slider-value"><span id="toughnessVal">${assessmentData.mentalScores.toughness || 5}</span><span>/10</span></div>
+                        </div>
+
+                        <div class="input-group">
+                            <label style="color: var(--text-dim); display: block; margin-bottom: 8px; font-weight: 600;">🛠️ Recovery & Mobility</label>
+                            <input type="range" min="1" max="10" value="${assessmentData.mobilityScores.recovery || 5}" 
+                                   onchange="assessmentData.mobilityScores.recovery = this.value; updateSliderDisplay(this)" class="slider-input">
+                            <div class="slider-value"><span id="recoveryVal">${assessmentData.mobilityScores.recovery || 5}</span><span>/10</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            content.innerHTML = html;
+
+            document.getElementById('prevBtn').style.display = currentStep > 0 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = currentStep === questions.length - 1 ? 'Generate Report →' : 'Next →';
+        }
+
+        function updateSliderDisplay(input) {
+            const id = input.parentElement.querySelector('span').id;
+            document.getElementById(id).textContent = input.value;
+        }
+
+        function selectOption(field, option, multi) {
+            if (multi) {
+                if (assessmentData[field].includes(option)) {
+                    assessmentData[field] = assessmentData[field].filter(o => o !== option);
+                } else {
+                    assessmentData[field].push(option);
+                }
+            } else {
+                assessmentData[field] = option;
+            }
+            renderQuestion();
+        }
+
+        function nextStep() {
+            const q = questions[currentStep];
+            if (q.type === 'text' || q.type === 'number') {
+                const input = document.getElementById('answer');
+                if (!input.value.trim()) {
+                    alert('Please enter a value');
+                    return;
+                }
+                assessmentData[q.field] = input.value;
+            }
+
+            if (currentStep === questions.length - 1) {
+                generateReport();
+            } else {
+                currentStep++;
+                renderQuestion();
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderQuestion();
+            }
+        }
+
+        function generateReport() {
+            const technicalRating = Math.round((parseInt(assessmentData.technicalScores.dribbling || 5) * 15) / 10);
+            const tacticalRating = Math.round((parseInt(assessmentData.tacticalScores.awareness || 5) * 14) / 10);
+            const physicalRating = Math.round((parseInt(assessmentData.physicalScores.speed || 5) * 16) / 10);
+            const mentalRating = Math.round((parseInt(assessmentData.mentalScores.toughness || 5) * 13) / 10);
+            const recoveryRating = Math.round((parseInt(assessmentData.mobilityScores.recovery || 5) * 13) / 10);
+            const overallRating = Math.round((technicalRating + tacticalRating + physicalRating + mentalRating + recoveryRating) / 5);
+
+            const archetypeMap = {
+                'Striker': 'Elite Finisher',
+                'Left Winger': 'Explosive Winger',
+                'Right Winger': 'Explosive Winger',
+                'CAM': 'Creative Playmaker',
+                'CDM': 'Ball Winning Midfielder',
+                'Center Back': 'Defensive Wall',
+                'Left Back': 'Dynamic Fullback',
+                'Right Back': 'Dynamic Fullback',
+                'Goalkeeper': 'Elite Keeper',
+                'Midfielder': 'Box-to-Box Midfielder',
+                'Fullback': 'Dynamic Fullback'
+            };
+
+            const archetype = archetypeMap[assessmentData.position] || 'Technical Creator';
+
+            const playerComparisons = {
+                'Striker': ['Kylian Mbappé', 'Erling Haaland', 'Harry Kane'],
+                'Left Winger': ['Vinicius Jr', 'Sadio Mané', 'Bukayo Saka'],
+                'Right Winger': ['Jadon Sancho', 'Heung-min Son', 'Phil Foden'],
+                'CAM': ['Kevin De Bruyne', 'James Maddison', 'Bruno Fernandes'],
+                'CDM': ['Rodri', 'Joshua Kimmich', 'Cody Gakpo'],
+                'Center Back': ['Vinícius Jr de Oliveira', 'Sergio Ramos', 'Héctor Bellerín'],
+                'Fullback': ['Trent Alexander-Arnold', 'Kyle Walker', 'Dani Alves'],
+                'Goalkeeper': ['Alisson', 'Manuel Neuer', 'Ederson']
+            };
+
+            const comparison = playerComparisons[assessmentData.position] || ['Elite player 1', 'Elite player 2', 'Elite player 3'];
+
+            const strengths = [];
+            const weaknesses = [];
+
+            if (physicalRating > 75) strengths.push('Explosive athleticism');
+            else weaknesses.push('Physical conditioning');
+
+            if (technicalRating > 75) strengths.push('Ball control & technique');
+            else weaknesses.push('Technical consistency');
+
+            if (tacticalRating > 75) strengths.push('Game awareness');
+            else weaknesses.push('Positioning');
+
+            if (mentalRating > 75) strengths.push('Mental resilience');
+            else weaknesses.push('Match composure');
+
+            if (recoveryRating > 75) strengths.push('Recovery habits');
+            else weaknesses.push('Recovery routines');
+
+            const focusAreas = [
+                {
+                    title: assessmentData.goal === 'Improve confidence' ? 'Mental Conditioning' : 'Technical Development',
+                    desc: 'Progressive skill mastery in high-pressure situations',
+                    priority: 'HIGH'
+                },
+                {
+                    title: assessmentData.goal === 'Improve endurance' ? 'Fitness' : 'Tactical Awareness',
+                    desc: 'Reading the game and optimal positioning',
+                    priority: 'HIGH'
+                },
+                {
+                    title: 'Physical Optimization',
+                    desc: 'Strength, power, and injury prevention',
+                    priority: 'MEDIUM'
+                },
+                {
+                    title: 'Recovery Protocol',
+                    desc: 'Sleep, mobility, and nutrition management',
+                    priority: 'MEDIUM'
+                }
+            ];
+
+            document.getElementById('reportPlayerName').textContent = assessmentData.name;
+            document.getElementById('reportPosition').textContent = `${assessmentData.position} • ${assessmentData.level}`;
+            document.getElementById('overallRating').textContent = overallRating;
+            document.getElementById('technicalRating').textContent = technicalRating;
+            document.getElementById('tacticalRating').textContent = tacticalRating;
+            document.getElementById('physicalRating').textContent = physicalRating;
+            document.getElementById('mentalRating').textContent = mentalRating;
+            document.getElementById('recoveryRating').textContent = recoveryRating;
+            document.getElementById('playerArchetype').textContent = archetype;
+            document.getElementById('archetypeBadge').textContent = archetype.toUpperCase();
+
+            const strengthsHTML = strengths.map(s => `<div class="strength-item">✓ ${s}</div>`).join('');
+            document.getElementById('strengthsList').innerHTML = strengthsHTML;
+
+            const weaknessesHTML = weaknesses.map(w => `<div class="weakness-item">↑ ${w}</div>`).join('');
+            document.getElementById('weaknessList').innerHTML = weaknessesHTML;
+
+            const focusHTML = focusAreas.map(f => `
+                <div class="focus-card">
+                    <div class="focus-area-title">${f.title}</div>
+                    <div class="focus-area-desc">${f.desc}</div>
+                    <div class="priority-badge">${f.priority}</div>
+                </div>
+            `).join('');
+            document.getElementById('focusAreas').innerHTML = focusHTML;
+
+            const comparisonHTML = comparison.map(p => `<div class="strength-item">⭐ ${p}</div>`).join('');
+            document.getElementById('playerComparisons').innerHTML = comparisonHTML;
+
+            const radarPoints = [
+                {x: 175, y: 70 + (100 - technicalRating) * 1.3},
+                {x: 245 - (100 - tacticalRating) * 0.7, y: 120 + (100 - tacticalRating) * 0.7},
+                {x: 260 - (100 - mentalRating) * 0.9, y: 190},
+                {x: 230 - (100 - recoveryRating) * 0.6, y: 260 - (100 - recoveryRating) * 0.7},
+                {x: 120 + (100 - physicalRating) * 0.6, y: 260 - (100 - physicalRating) * 0.7}
+            ];
+
+            const polygonPoints = radarPoints.map(p => `${p.x},${p.y}`).join(' ');
+            document.getElementById('radarPolygon').setAttribute('points', polygonPoints);
+
+            window.reportData = {
+                technicalRating, tacticalRating, physicalRating, mentalRating, recoveryRating, overallRating
+            };
+
+            showPage('reportPage');
+        }
+
+        function goToTrainingPlan() {
+            generateTrainingPlan();
+            showPage('trainingPlanPage');
+        }
+
+        function generateTrainingPlan() {
+            const planLength = parseInt(assessmentData.planLength.split(' ')[0]);
+            const weeks = [];
+
+            for (let w = 1; w <= planLength; w++) {
+                const weekDays = [];
+                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+                days.forEach((day, idx) => {
+                    let dayType = 'rest';
+                    let workouts = [];
+
+                    const practiceDaysArray = assessmentData.practiceDays.split(',').map(d => d.trim());
+                    const gameDaysArray = assessmentData.gameDays.split(',').map(d => d.trim());
+
+                    if (gameDaysArray.some(gd => gd.toLowerCase().includes(day.toLowerCase()))) {
+                        dayType = 'game';
+                        workouts = ['Game Day - Recovery Focus', 'Pre-game meal prep'];
+                    } else if (practiceDaysArray.some(pd => pd.toLowerCase().includes(day.toLowerCase()))) {
+                        dayType = 'practice';
+                        workouts = ['Team Practice', 'Light technical activation', 'Mobility work'];
+                    } else {
+                        dayType = 'training';
+                        if (assessmentData.intensity === 'Light') {
+                            workouts = ['Technical drill: Dribbling circuits', 'Gym: Upper body', 'Recovery & mobility'];
+                        } else if (assessmentData.intensity === 'Moderate') {
+                            workouts = ['Technical: Positional play', 'Gym: Strength focus', 'Advanced mobility'];
+                        } else if (assessmentData.intensity === 'Intense' || assessmentData.intensity === 'Elite Grind') {
+                            workouts = ['Advanced technical drills', 'Gym: Explosive work', 'Recovery protocol'];
+                        }
+                    }
+
+                    weekDays.push({
+                        day,
+                        dayNum: idx + 1,
+                        type: dayType,
+                        workouts
+                    });
+                });
+
+                weeks.push(weekDays);
+            }
+
+            let weekSelectorHTML = '';
+            for (let i = 0; i < planLength; i++) {
+                weekSelectorHTML += `<button class="week-btn ${i === 0 ? 'active' : ''}" onclick="switchWeek(${i})">Week ${i + 1}</button>`;
+            }
+            document.getElementById('weekSelector').innerHTML = weekSelectorHTML;
+
+            window.trainingWeeks = weeks;
+
+            switchWeek(0);
+        }
+
+        function switchWeek(weekIndex) {
+            document.querySelectorAll('.week-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === weekIndex);
+            });
+
+            const week = window.trainingWeeks[weekIndex];
+            let calendarHTML = '';
+
+            week.forEach(day => {
+                const workoutHTML = day.workouts.map(w => `<div class="workout-item">${w}</div>`).join('');
+                calendarHTML += `
+                    <div class="day-card ${day.type}" onclick="expandDay(this, ${weekIndex}, ${day.dayNum - 1})">
+                        <div class="day-header">
+                            <div>
+                                <div class="day-name">${day.day}</div>
+                                <div class="day-number">Day ${day.dayNum}</div>
+                            </div>
+                        </div>
+                        <div class="day-type ${day.type}">${day.type.toUpperCase()}</div>
+                        ${workoutHTML}
+                    </div>
+                `;
+            });
+
+            document.getElementById('calendarGrid').innerHTML = calendarHTML;
+            document.getElementById('selectedDayWorkout').innerHTML = '';
+        }
+
+        function expandDay(element, weekIndex, dayIndex) {
+            const day = window.trainingWeeks[weekIndex][dayIndex];
+            
+            let detailHTML = `
+                <div class="workout-detail">
+                    <div class="workout-title">${day.day}'s Training Plan</div>
+                    
+                    <div class="workout-section">
+                        <div class="workout-section-title">🎯 Session Focus: ${day.type.toUpperCase()}</div>
+                        <div class="coaching-points">${getSessionDescription(day.type, assessmentData.intensity)}</div>
+                    </div>
+            `;
+
+            if (day.type === 'training') {
+                detailHTML += `
+                    <div class="workout-section">
+                        <div class="workout-section-title">⚙️ Gym Work (30 mins)</div>
+                        ${getGymExercises(assessmentData.position, assessmentData.intensity).map(ex => `
+                            <div class="exercise-card">
+                                <div class="exercise-name">${ex.name}</div>
+                                <div class="exercise-details">
+                                    <div class="exercise-detail"><strong>Sets × Reps</strong> ${ex.sets}</div>
+                                    <div class="exercise-detail"><strong>Rest</strong> ${ex.rest}</div>
+                                    <div class="exercise-detail"><strong>Purpose</strong> ${ex.purpose}</div>
+                                </div>
+                                <div class="coaching-points"><strong>Form Tip:</strong> ${ex.form}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="workout-section">
+                        <div class="workout-section-title">⚽ Technical Training (1h 45m)</div>
+                        ${getTechnicalDrills(assessmentData.position).map(drill => `
+                            <div class="exercise-card">
+                                <div class="exercise-name">${drill.name}</div>
+                                <div class="exercise-details">
+                                    <div class="exercise-detail"><strong>Duration</strong> ${drill.duration}</div>
+                                    <div class="exercise-detail"><strong>Reps</strong> ${drill.reps}</div>
+                                    <div class="exercise-detail"><strong>Focus</strong> ${drill.focus}</div>
+                                </div>
+                                <div class="coaching-points"><strong>Key Point:</strong> ${drill.coaching}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="workout-section">
+                        <div class="workout-section-title">🛠️ Mobility & Recovery (15 mins)</div>
+                        ${getMobilityExercises().map(ex => `
+                            <div class="exercise-card">
+                                <div class="exercise-name">${ex.name}</div>
+                                <div class="exercise-details">
+                                    <div class="exercise-detail"><strong>Duration</strong> ${ex.duration}</div>
+                                    <div class="exercise-detail"><strong>Intensity</strong> ${ex.intensity}</div>
+                                </div>
+                                <div class="coaching-points"><strong>Focus:</strong> ${ex.focus}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (day.type === 'game') {
+                detailHTML += `
+                    <div class="workout-section">
+                        <div class="workout-section-title">🔥 Pre-Game Preparation</div>
+                        <div class="exercise-card">
+                            <div class="exercise-name">Pre-Game Activation (10 mins)</div>
+                            <div class="coaching-points">Light dynamic stretches, ball touch, agility ladder drills</div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-name">Mental Preparation</div>
+                            <div class="coaching-points">Deep breathing (3 rounds of 4-7-8), visualization of key moments</div>
+                        </div>
+                    </div>
+
+                    <div class="workout-section">
+                        <div class="workout-section-title">🎯 Match Day Tips</div>
+                        <div class="coaching-points">
+                            • Stay hydrated - drink 500ml water 2 hours before<br>
+                            • Focus on first touches in warm-up<br>
+                            • Trust your training, execute the basics<br>
+                            • Communicate with teammates constantly
+                        </div>
+                    </div>
+                `;
+            } else if (day.type === 'practice') {
+                detailHTML += `
+                    <div class="workout-section">
+                        <div class="workout-section-title">📝 Recovery Session</div>
+                        <div class="exercise-card">
+                            <div class="exercise-name">Light Technical Activation (20 mins)</div>
+                            <div class="coaching-points">Easy dribbling, passing patterns, ball feel work - low intensity</div>
+                        </div>
+                        <div class="exercise-card">
+                            <div class="exercise-name">Advanced Mobility & Breathing</div>
+                            <div class="coaching-points">PNF stretching, yoga poses, deep breathing exercises (20 mins)</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            detailHTML += '</div>';
+            document.getElementById('selectedDayWorkout').innerHTML = detailHTML;
+        }
+
+        function getSessionDescription(type, intensity) {
+            const descriptions = {
+                training: `Complete training session focusing on physical development, technical refinement, and tactical understanding. Effort: ${intensity || 'Moderate'}.`,
+                practice: 'Recovery and activation following team practice. Light intensity, focus on mobility and ball feel.',
+                game: 'Match day - preparation for competitive play. Focus on readiness and mental preparation.',
+                rest: 'Complete rest day. Light stretching and recovery practices optional.'
+            };
+            return descriptions[type] || '';
+        }
+
+        function getGymExercises(position, intensity) {
+            const exercises = [
+                { name: 'Back Squats', sets: '4 × 6-8', rest: '2-3 min', purpose: 'Leg strength & explosiveness', form: 'Keep chest up, drive through heels' },
+                { name: 'Bench Press', sets: '3 × 8-10', rest: '2 min', purpose: 'Upper body strength', form: 'Full range of motion, controlled descent' },
+                { name: 'Romanian Deadlifts', sets: '3 × 8', rest: '90 sec', purpose: 'Hamstring strength', form: 'Feel the stretch in hamstrings' },
+                { name: 'Lateral Bounds', sets: '3 × 6 each', rest: '90 sec', purpose: 'Lateral explosiveness', form: 'Explosive push-off, land balanced' },
+                { name: 'Pallof Press', sets: '3 × 10 each', rest: '60 sec', purpose: 'Core stability', form: 'Resist rotation, maintain posture' }
+            ];
+            return exercises;
+        }
+
+        function getTechnicalDrills(position) {
+            const drills = [
+                { name: 'Cone Dribbling - Speed Progression', duration: '20 min', reps: '5 sets', focus: 'First touch & acceleration', coaching: 'Start slow, gradually increase pace over sets' },
+                { name: 'Wall Passing Combinations', duration: '20 min', reps: '6 sets', focus: 'Accuracy & timing', coaching: 'Vary foot and distance, focus on one-touch returns' },
+                { name: 'Positional Play Circuit', duration: '30 min', reps: '3 sets', focus: 'Decision making', coaching: 'Apply pressure rules, work in smaller spaces' },
+                { name: 'Finishing Drill - Multiple Angles', duration: '20 min', reps: '20 shots', focus: 'Conversion rate', coaching: 'Strike through the ball, follow through on shots' },
+                { name: '1v1 Transitions', duration: '15 min', reps: '10 rounds', focus: 'Defensive shape', coaching: 'Stay between ball and goal, force weak foot' }
+            ];
+            return drills;
+        }
+
+        function getMobilityExercises() {
+            return [
+                { name: 'Deep Hamstring Stretch', duration: '45 sec each leg', intensity: 'Light', focus: 'Posterior chain recovery' },
+                { name: 'Hip Flexor Stretch', duration: '30 sec each side', intensity: 'Light', focus: 'Groin & hip opening' },
+                { name: 'World\'s Greatest Stretch', duration: '10 reps each side', intensity: 'Moderate', focus: 'Full body mobility' },
+                { name: 'Breathing Exercises (4-7-8)', duration: '2 minutes', intensity: 'Light', focus: 'Parasympathetic activation' }
+            ];
+        }
+
+        function goToDashboard() {
+            document.getElementById('dashboardName').textContent = assessmentData.name;
+            document.getElementById('dashboardMessage').textContent = `${assessmentData.goal} is your focus. Stay consistent! 💪`;
+
+            const activityData = [85, 72, 91, 65, 88, 95, 40];
+            let activityHTML = '';
+            const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            activityData.forEach((val, i) => {
+                activityHTML += `
+                    <div class="bar-container">
+                        <div class="bar">
+                            <div class="bar-fill" style="height: ${val}%"></div>
+                        </div>
+                        <div class="bar-label">${dayLabels[i]}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('activityBars').innerHTML = activityHTML;
+
+            const focusPoints = [
+                '✓ Focus on first touch in tight spaces - 3 pts improvement potential',
+                '✓ Work on weak foot passing - build consistency',
+                '✓ Study your position - watch 10 min of pro video',
+                '✓ Recovery: 8+ hours sleep, 3L water daily',
+                '✓ Mental: Visualization of match-winning moments (5 min)'
+            ];
+            const focusHTML = focusPoints.map(f => `<div class="exercise-card"><div class="exercise-name">${f}</div></div>`).join('');
+            document.getElementById('dailyFocusPoints').innerHTML = focusHTML;
+
+            showPage('dashboardPage');
+        }
+
+        renderQuestion();
+    </script>
+</body>
+</html>
